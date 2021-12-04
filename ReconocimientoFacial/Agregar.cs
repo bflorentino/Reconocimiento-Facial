@@ -21,9 +21,21 @@ namespace ReconocimientoFacial
 
         private void button1_Click(object sender, EventArgs e)
         {
-            ConexionSQL.InsertarUsuario(txtNombre.Text, txtCorreo.Text, txtTelefono.Text, txtHistorial.Text);
-            formu.CambiarNombre(txtNombre.Text);
-            this.Close();
+            if(txtNombre.Text == "")
+            {
+                MessageBox.Show("Se necesita ingresar el nombre de la persona", "Error al registrar datos");
+            }
+            else if(txtHistorial.Text == "")
+            {
+                MessageBox.Show("Se necesita ingresar un historial para la persona", "Error al registrar datos");
+            }
+            else
+            {
+                    ConexionSQL.InsertarUsuario(txtNombre.Text, txtCorreo.Text, txtTelefono.Text, txtHistorial.Text);
+                    formu.CambiarNombre(txtNombre.Text);
+                    this.Close();
+            }
+            
         }
 
         private void Agregar_FormClosed(object sender, FormClosedEventArgs e)
