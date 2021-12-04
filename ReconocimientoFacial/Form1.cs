@@ -14,6 +14,7 @@ using Emgu.CV.CvEnum;
 using Emgu.CV.Face;
 using System.IO;
 using System.Diagnostics;
+using System.Data.SqlClient;
 
 namespace ReconocimientoFacial
 {
@@ -31,6 +32,9 @@ namespace ReconocimientoFacial
        static bool  estaEntrenada = false;
        EigenFaceRecognizer reconocedora;
        List<string> nombresDePersonas = new List<string>();
+       public string NombrePersonaActual = "";
+        private Boolean ventanaAbierta = false;
+        private bool Reconociendo = false;
 
         public Form1()
         {
@@ -111,7 +115,7 @@ namespace ReconocimientoFacial
                         }
 
                         // Paso 5: Reconocer los rostros ya conocidos
-                        if (estaEntrenada)
+                        if (estaEntrenada && Reconociendo)
                         {
                             Image<Gray, Byte> grayFaceResult = imagenResultante.Convert<Gray, Byte>().Resize(200, 200, Inter.Cubic);
                             CvInvoke.EqualizeHist(grayFaceResult, grayFaceResult);
@@ -123,6 +127,16 @@ namespace ReconocimientoFacial
                                 CvInvoke.PutText(MarcoActual, nombresDePersonas[resultado.Label], new Point(rostro.X - 2, rostro.Y - 2),
                                     FontFace.HersheyComplex, 1.0, new Bgr(Color.Orange).MCvScalar);
                                 CvInvoke.Rectangle(MarcoActual, rostro, new Bgr(Color.Green).MCvScalar, 2);
+
+                                 if(ventanaAbierta == false)
+                                    {
+                                      Reconociendo = false;
+                                      SqlDataReader leer= ConexionSQL.BuscarUsuario(nombresDePersonas[resultado.Label]);
+                                      VerPersona verPersona = new VerPersona(leer, this);
+                                      verPersona.ShowDialog();
+                                      ventanaAbierta = true;
+                                       videoCaptura = null;
+                                    }
                             }
                             //En caso de que no haya encontrado rostros conocidos
                             else
@@ -135,11 +149,14 @@ namespace ReconocimientoFacial
                     }
                 }
             }
-            // Renderizar la video captura en el picture box que hemos creado
-            picCaptura.Image = MarcoActual.Bitmap;
-         }
-            if(MarcoActual != null)
-                MarcoActual.Dispose();
+                if(videoCaptura != null)
+                {
+                // Renderizar la video captura en el picture box que hemos creado
+                picCaptura.Image = MarcoActual.Bitmap;
+             }
+                if(MarcoActual != null)
+                    MarcoActual.Dispose();
+                }
      }
 
         private void btnDetectar_Click(object sender, EventArgs e)
@@ -154,15 +171,9 @@ namespace ReconocimientoFacial
             habilitarGuardadoImagenes = true;
         }
 
-        private void btnSave_Click(object sender, EventArgs e)
-        {
-            btnSave.Enabled = false;
-            btnRegistrar.Enabled = true;
-            habilitarGuardadoImagenes = false;
-        }
-
         private void btnTrain_Click(object sender, EventArgs e)
         {
+            Reconociendo = true;
             EntrenarImagenesDesdeDir();
         }
 
@@ -209,6 +220,18 @@ namespace ReconocimientoFacial
                 MessageBox.Show($"Error al entrenar imagenes: {ex.Message}");
                 return false;
             }
+        }
+
+        private void btnAgregar_Click(object sender, EventArgs e)
+        {
+            Form formulario = new Agregar(this);
+            formulario.ShowDialog();
+        }
+
+        public void CambiarNombre(string nombre)
+        {
+            txtNombre.Text = nombre;
+            btnRegistrar.Enabled = true;
         }
     }
 }

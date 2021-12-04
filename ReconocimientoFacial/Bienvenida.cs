@@ -10,24 +10,18 @@ using System.Windows.Forms;
 
 namespace ReconocimientoFacial
 {
-    public partial class Agregar : Form
+    public partial class Bienvenida : Form
     {
-        Form1 formu;
-        public Agregar(Form1 formulario)
+        public Bienvenida()
         {
             InitializeComponent();
-            formu = formulario;
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            ConexionSQL.InsertarUsuario(txtNombre.Text, txtCorreo.Text, txtTelefono.Text, txtHistorial.Text);
-            formu.CambiarNombre(txtNombre.Text);
+            Form1 form = new Form1();
+            form.ShowDialog();
             this.Close();
-        }
-
-        private void Agregar_FormClosed(object sender, FormClosedEventArgs e)
-        {
         }
     }
 }
