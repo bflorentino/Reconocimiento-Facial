@@ -21,7 +21,7 @@ namespace ReconocimientoFacial
     public partial class Form1 : Form
     {
        private Capture videoCaptura = null;
-       private Image<Bgr, Byte> MarcoActual = null;
+       private Image<Bgr, byte> MarcoActual = null;
        Mat frame = new Mat();
        private bool deteccionRostros = false;
        CascadeClassifier rostroCascadeClasificador = new CascadeClassifier("haarcascade_frontalface_alt.xml");
@@ -57,13 +57,13 @@ namespace ReconocimientoFacial
             {
             // Captura de video
             videoCaptura.Retrieve(frame, 0);
-            MarcoActual = frame.ToImage<Bgr, Byte>().Resize(picCaptura.Width, picCaptura.Height, Inter.Cubic);
+            MarcoActual = frame.ToImage<Bgr, byte>().Resize(picCaptura.Width, picCaptura.Height, Inter.Cubic);
 
             // Detectar el rostro de la persona en el video
             if (deteccionRostros)
             {
                 // Convertir de imagen a color a gris
-                Mat imagenGris = new Mat();
+                Mat imagenGris = new Mat(); 
                 CvInvoke.CvtColor(MarcoActual, imagenGris, ColorConversion.Bgr2Gray);
                 
                 // Enhance the image to get better results
@@ -77,7 +77,7 @@ namespace ReconocimientoFacial
                     foreach(var rostro in rostros)
                     {
                         CvInvoke.Rectangle(MarcoActual, rostro, new Bgr(Color.Red).MCvScalar, 2);
-
+                            
                         //  Registrar a una persona
                         // Asignar el rostro al picture box de captura de rostro
                         Image<Bgr, Byte> imagenResultante = MarcoActual.Convert<Bgr, Byte>();
@@ -128,6 +128,8 @@ namespace ReconocimientoFacial
                                     FontFace.HersheyComplex, 1.0, new Bgr(Color.Orange).MCvScalar);
                                 CvInvoke.Rectangle(MarcoActual, rostro, new Bgr(Color.Green).MCvScalar, 2);
 
+                            // En caso de que se detecte un rostro que sea reconocido, se realizará una consulta por el nombre de la persona
+                            // y se mostrará la información de la persona en un nuevo form
                                  if(ventanaAbierta == false)
                                     {
                                       Reconociendo = false;
