@@ -129,7 +129,11 @@ namespace ReconocimientoFacial
                                 CvInvoke.Rectangle(MarcoActual, rostro, new Bgr(Color.Green).MCvScalar, 2);
 
                             // En caso de que se detecte un rostro que sea reconocido, se realizará una consulta por el nombre de la persona
-                            // y se mostrará la información de la persona en un nuevo form
+                            // y se mostrará la información de la persona en un nuevo form. 
+                            // La variable ventanaAbierta representa un booleano que verifica si el form a través del cual se está 
+                            // haciendo la consulta no esta abierto. Si esta abierto quiere decir que ya la consulta se realizo
+                            // y que se estan mostrando los datos de la persona. Con esta variable booleana nos aseguramos de que
+                            // la aplicacion no abra infinitas ventanas, ya que si la ventana esta abierta, pues no tiene porque volver abrirse.
                                  if(ventanaAbierta == false)
                                     {
                                       Reconociendo = false;
